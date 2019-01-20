@@ -1,30 +1,29 @@
-function loadScript(url, callback, type='text/javascript') {
-    // Adding the script tag to the head as suggested before
-    var head = document.head;
-    var script = document.createElement('script');
-    script.type = type;
-    script.src = url;
+// function loadScript(url, callback, type='text/javascript') {
+//     // Adding the script tag to the head as suggested before
+//     var head = document.head;
+//     var script = document.createElement('script');
 
-    // Then bind the event to the callback function.
-    // There are several events for cross browser compatibility.
-    script.onreadystatechange = callback;
-    script.onload = callback;
+//     script.setAttribute("crossorigin", true)
+//     script.type = type;
+//     script.src = url;
 
-    // Fire the loading
-    head.appendChild(script);
-}
+//     // Then bind the event to the callback function.
+//     // There are several events for cross browser compatibility.
+//     script.onreadystatechange = callback;
+//     script.onload = callback;
+
+//     // Fire the loading
+//     head.appendChild(script);
+// }
+
+// loadScript('https://unpkg.com/babel-standalone@6.24.0/babel.min.js', () => {
+//     loadScript('/app.js', () => {
+//     }, 'text/babel');
+// });
 
 function retrieveCustomers() {
     return fetch('/api').then(r => r.json()).then(customers => getCustomers(customers));
 }
-
-// loadScript('https://unpkg.com/babel-standalone@6.24.0/babel.min.js', () => {
-//     console.log('loaded the outer file');
-//     loadScript('/app.js', () => {
-//         console.log('load this file');
-//     }, 'text/babel');
-// });
-
 
 function getParameterByName(name) {
     const match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);

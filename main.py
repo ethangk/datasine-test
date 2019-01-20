@@ -11,7 +11,7 @@ app_js = open('app.js', 'r').read()
 
 @app.route('/')
 def root():
-    return open('index.html', 'r').read()
+    return html
 
 
 @app.route("/api")
@@ -25,8 +25,8 @@ def get_customers():
 
 @app.route('/index.js')
 def webapp():
-    return open('index.js', 'r').read()
+    return js_app
 
 @app.route('/app.js')
 def appjs():
-    return open('app.js', 'r').read()
+    return app_js

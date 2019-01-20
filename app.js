@@ -111,16 +111,20 @@ function CompanyButton(props) {
         Company
       </div>
       <div className="col-6">
-        <select className="custom-select" onChange={(e) => props.setFunction(e.target.value)}>
-          <option key={null} value={false} default> </option>
+        <select
+          className="custom-select"
+          onChange={(e) => props.setFunction(e.target.value)}
+          value={props.companyFilter}
+        >
+          <option key={false} value={false}> </option>
           { props.companies.map(company => (
-            <option key={company} value={company} selected={props.companyFilter === company}>{company}</option>
+            <option key={company} value={company}>{company}</option>
           )) }
         </select>
 
       </div>
       <div className="col-4">
-        <Button title="Clear" onClick={setFunction(null)} active={props.companyFilter === null} />
+        <Button title="Clear" onClick={setFunction(false)} active={!props.companyFilter} />
       </div>
     </div>
   );
@@ -137,16 +141,20 @@ function ProfessionButton(props) {
         Profession
       </div>
       <div className="col-6">
-        <select className="custom-select" onChange={(e) => props.setFunction(e.target.value)}>
-          <option key={null} value={false}> </option>
+        <select
+          className="custom-select"
+          onChange={(e) => props.setFunction(e.target.value)}
+          value={props.professionFilter}
+        >
+          <option key={false} value={false}> </option>
           {props.professions.map(company => (
-            <option key={company} value={company} selected={props.professionFilter === company}>{company}</option>
+            <option key={company} value={company}>{company}</option>
           ))}
         </select>
 
       </div>
       <div className="col-4">
-        <Button title="Clear" onClick={setFunction(null)} active={props.professionFilter === null} />
+        <Button title="Clear" onClick={setFunction(false)} active={!props.professionFilter} />
       </div>
     </div>
   );
@@ -163,8 +171,8 @@ class App extends React.Component {
       companies: [],
       professions: [],
 
-      companyFilter: null,
-      professionFilter: null
+      companyFilter: false,
+      professionFilter: false
     };
 
     this.filterData = this.filterData.bind(this);
@@ -271,13 +279,13 @@ class App extends React.Component {
 
   setCompanyFilter(companyFilter) {
     this.setState({
-      companyFilter: companyFilter === 'false' ? null : companyFilter
+      companyFilter: companyFilter === 'false' ? false : companyFilter
     });
   }
 
   setProfessionFilter(professionFilter) {
     this.setState({
-      professionFilter: professionFilter === 'false' ? null : professionFilter
+      professionFilter: professionFilter === 'false' ? false : professionFilter
     });
   }
 
