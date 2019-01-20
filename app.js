@@ -89,6 +89,8 @@ function SortButtons(props) {
         Sort
       </div>
       <div className="col-6">
+        <Button title="First Name" onClick={setFunction('firstname')} active={props.sortType === 'firstname'} />
+        <Button title="Surname" onClick={setFunction('surname')} active={props.sortType === 'surname'} />
         <Button title="Age" onClick={setFunction('age')} active={props.sortType === 'age'} />
       </div>
       <div className="col-4">
@@ -110,7 +112,7 @@ function CompanyButton(props) {
       </div>
       <div className="col-6">
         <select className="custom-select" onChange={(e) => props.setFunction(e.target.value)}>
-          <option key={null} value={null} default>None</option>
+          <option key={null} value={false} default> </option>
           { props.companies.map(company => (
             <option key={company} value={company} selected={props.companyFilter === company}>{company}</option>
           )) }
@@ -135,8 +137,8 @@ function ProfessionButton(props) {
         Profession
       </div>
       <div className="col-6">
-        <select className="custom-select" onClick={(e) => props.setFunction(e.target.value)}>
-          <option key={null}>None</option>
+        <select className="custom-select" onChange={(e) => props.setFunction(e.target.value)}>
+          <option key={null} value={false}> </option>
           {props.professions.map(company => (
             <option key={company} value={company} selected={props.professionFilter === company}>{company}</option>
           ))}
@@ -175,6 +177,8 @@ class App extends React.Component {
   static getDerivedStateFromProps(nextProps) {
     let professions = [...new Set(nextProps.customers.map(customer => customer.profession).filter(c => !!c))];
     professions.sort();
+
+
     return {
       companies: [...new Set(nextProps.customers.map(customer => customer.company).filter(c => !!c))],
       professions
@@ -224,11 +228,25 @@ class App extends React.Component {
       .filter(this.professionFilter(this.state.professionFilter))
   }
 
+  alphabeticalSortFunction(a, b, property) {
+    const leftValue = a[property].toLowerCase();
+    const rightValue = b[property].toLowerCase();
+    if (leftValue < rightValue) { return -1; }
+    if (leftValue > rightValue) { return 1; }
+    return 0;
+  }
+
   sortData(data, sortType) {
     let sortFunction = null;
     switch(sortType) {
       case 'age':
         sortFunction = (a, b) => a.age - b.age
+        break;
+      case 'firstname':
+        sortFunction = (a, b) => this.alphabeticalSortFunction(a, b, 'first_name')
+      break;
+      case 'surname':
+        sortFunction = (a, b) => this.alphabeticalSortFunction(a, b, 'last_name')
         break;
       default:
         sortFunction = () => 0;
@@ -240,7 +258,6 @@ class App extends React.Component {
   }
 
   setGenderFilter(genderFilter) {
-    console.log('set filter', genderFilter);
     this.setState({
       genderFilter
     });
@@ -254,13 +271,13 @@ class App extends React.Component {
 
   setCompanyFilter(companyFilter) {
     this.setState({
-      companyFilter
+      companyFilter: companyFilter === 'false' ? null : companyFilter
     });
   }
 
   setProfessionFilter(professionFilter) {
     this.setState({
-      professionFilter
+      professionFilter: professionFilter === 'false' ? null : professionFilter
     });
   }
 
@@ -270,7 +287,6 @@ class App extends React.Component {
       this.state.sortType
     );
 
-    console.log('rendering', this.state.filterType);
     return (
       <React.Fragment>
         <GenderButtons
