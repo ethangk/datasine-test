@@ -57,9 +57,97 @@ const buttonStyle = {
 };
 
 function GenderButtons(props) {
+  const setFunction = (value) => {
+    return () => props.setFunction(value);
+  };
+
   return (
-    
+    <div className="row">
+      <div className="col-2 h5">
+        Gender
+      </div>
+      <div className="col-6">
+        <Button title="Male" onClick={setFunction('male')} active={props.genderFilter === 'male'} />
+        <Button title="Female" onClick={setFunction('female')} active={props.genderFilter === 'female'} />
+        <Button title="Other" onClick={setFunction('other')} active={props.genderFilter === 'other'} />
+      </div>
+      <div className="col-4">
+        <Button title="Clear" onClick={setFunction(null)} active={props.genderFilter === null} />
+      </div>
+    </div>
   )
+}
+
+function SortButtons(props) {
+  const setFunction = (value) => {
+    return () => props.setFunction(value);
+  };
+
+  return (
+    <div className="row">
+      <div className="col-2 h5">
+        Sort
+      </div>
+      <div className="col-6">
+        <Button title="Age" onClick={setFunction('age')} active={props.sortType === 'age'} />
+      </div>
+      <div className="col-4">
+        <Button title="Clear" onClick={setFunction(null)} active={props.sortType === null} />
+      </div>
+    </div>
+  );
+}
+
+function CompanyButton(props) {
+  const setFunction = (value) => {
+    return () => props.setFunction(value);
+  };
+
+  return (
+    <div className="row">
+      <div className="col-2 h5">
+        Company
+      </div>
+      <div className="col-6">
+        <select className="custom-select" onChange={(e) => props.setFunction(e.target.value)}>
+          <option key={null} value={null} default>None</option>
+          { props.companies.map(company => (
+            <option key={company} value={company} selected={props.companyFilter === company}>{company}</option>
+          )) }
+        </select>
+
+      </div>
+      <div className="col-4">
+        <Button title="Clear" onClick={setFunction(null)} active={props.companyFilter === null} />
+      </div>
+    </div>
+  );
+}
+
+function ProfessionButton(props) {
+  const setFunction = (value) => {
+    return () => props.setFunction(value);
+  };
+
+  return (
+    <div className="row">
+      <div className="col-2 h5">
+        Profession
+      </div>
+      <div className="col-6">
+        <select className="custom-select" onClick={(e) => props.setFunction(e.target.value)}>
+          <option key={null}>None</option>
+          {props.professions.map(company => (
+            <option key={company} value={company} selected={props.professionFilter === company}>{company}</option>
+          ))}
+        </select>
+
+      </div>
+      <div className="col-4">
+        <Button title="Clear" onClick={setFunction(null)} active={props.professionFilter === null} />
+      </div>
+    </div>
+  );
 }
 
 class App extends React.Component {
@@ -68,11 +156,29 @@ class App extends React.Component {
 
     this.state = {
       genderFilter: null,
-      sortType: null
+      sortType: null,
+
+      companies: [],
+      professions: [],
+
+      companyFilter: null,
+      professionFilter: null
     };
 
-    this.setFilter = this.setFilter.bind(this);
     this.filterData = this.filterData.bind(this);
+    this.setSort = this.setSort.bind(this);
+    this.setGenderFilter = this.setGenderFilter.bind(this);
+    this.setCompanyFilter = this.setCompanyFilter.bind(this);
+    this.setProfessionFilter = this.setProfessionFilter.bind(this);
+  }
+
+  static getDerivedStateFromProps(nextProps) {
+    let professions = [...new Set(nextProps.customers.map(customer => customer.profession).filter(c => !!c))];
+    professions.sort();
+    return {
+      companies: [...new Set(nextProps.customers.map(customer => customer.company).filter(c => !!c))],
+      professions
+    };
   }
 
   genderFilter(gender) {
@@ -133,9 +239,10 @@ class App extends React.Component {
     return dataClone;
   }
 
-  setFilter(filterType) {
+  setGenderFilter(genderFilter) {
+    console.log('set filter', genderFilter);
     this.setState({
-      filterType
+      genderFilter
     });
   }
 
@@ -145,45 +252,49 @@ class App extends React.Component {
     });
   }
 
+  setCompanyFilter(companyFilter) {
+    this.setState({
+      companyFilter
+    });
+  }
+
+  setProfessionFilter(professionFilter) {
+    this.setState({
+      professionFilter
+    });
+  }
+
   render() {
     const data = this.sortData(
-      this.filterData(this.props.customers, this.state.filterType),
+      this.filterData(this.props.customers),
       this.state.sortType
     );
 
+    console.log('rendering', this.state.filterType);
     return (
       <React.Fragment>
-        <div className="row">
-          <div className="col-2 h5">
-            Gender
-          </div>
-          <div className="col-10">
-            <Button title="Male" onClick={() => this.setFilter('male')} active={this.state.filterType === 'male'} />
-            <Button title="Female" onClick={() => this.setFilter('female')} active={this.state.filterType === 'female'} />
-            <Button title="Other" onClick={() => this.setFilter('other')} active={this.state.filterType === 'other'} />
-            <Button title="Clear" onClick={() => this.setFilter(null)} active={this.state.filterType === null} />
-          </div>
-        </div>
+        <GenderButtons
+          genderFilter={this.state.genderFilter}
+          setFunction={this.setGenderFilter}
+        />
           
-        <div className="row">
-          <div className="col-2 h5">
-            Sort
-          </div>
-          <div className="col-10">
-            <Button title="Age" onClick={() => this.setSort('age')} active={this.state.sortType === 'age'} />
-            <Button title="Clear" onClick={() => this.setSort(null)} active={this.state.sortType === null} />
-          </div>
-        </div>
+        <SortButtons
+          sortType={this.state.sortType}
+          setFunction={this.setSort}
+        />
 
-        <div className="row">
-          <div className="col-2 h5">
-            Sort
-          </div>
-          <div className="col-10">
-            <Button title="Age" onClick={() => this.setSort('age')} active={this.state.sortType === 'age'} />
-            <Button title="Clear" onClick={() => this.setSort(null)} active={this.state.sortType === null} />
-          </div>
-        </div>
+        <CompanyButton
+          companies={this.state.companies}
+          setFunction={this.setCompanyFilter}
+          companyFilter={this.state.companyFilter}
+        />
+
+        <ProfessionButton
+          professions={this.state.professions}
+          setFunction={this.setProfessionFilter}
+          professionFilter={this.state.professionFilter}
+        />
+
         <CustomerTable customers={data} />
       </React.Fragment>
     )
