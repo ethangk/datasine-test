@@ -6,11 +6,12 @@ app = Flask(__name__)
 customers = json.load(open('customers.json', 'r'))
 html = open('index.html', 'r').read()
 js_app = open('index.js', 'r').read()
+app_js = open('app.js', 'r').read()
 
 
 @app.route('/')
 def root():
-    return html
+    return open('index.html', 'r').read()
 
 
 @app.route("/api")
@@ -25,3 +26,7 @@ def get_customers():
 @app.route('/index.js')
 def webapp():
     return open('index.js', 'r').read()
+
+@app.route('/app.js')
+def appjs():
+    return open('app.js', 'r').read()
